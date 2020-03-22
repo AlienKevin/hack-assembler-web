@@ -25,7 +25,9 @@ This project is structured in four parts:
 1. [Parser](src/hack_parser.rs)
 2. [Emitter](src/hack_emitter.rs)
 3. [Assembler](src/hack_assembler.rs)
-4. [Command Line Interface for the Assembler](src/main.rs)
+4. [Browser interface written in Elm](www/index.html)
+
+If you prefer a command line interface, try the original project [hack-assembler](https://github.com/AlienKevin/hack-assembler).
 
 # Want to learn more about Hack?
 
