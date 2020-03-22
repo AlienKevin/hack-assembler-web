@@ -1,69 +1,38 @@
-<div align="center">
+# hack-assembler
+Assembler for the Hack computer written in Rust.
 
-  <h1><code>wasm-pack-template</code></h1>
+# What is Hack?
+Hack is an assembly language included in the online course ["Build a Modern Computer from First Principles: From Nand to Tetris"](https://www.coursera.org/learn/build-a-computer/home/welcome) and the book "The Elements of Computing Systems" by Noam Nisan and Shimon Schocken (MIT Press). Hack is also the name of the computer Noam and Shimon designed as the project for the course "From Nand to Tetris".
 
-  <strong>A template for kick starting a Rust and WebAssembly project using <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</strong>
+# Hack Specification
+The Hack assembly language has two types of instructions:
 
-  <p>
-    <a href="https://travis-ci.org/rustwasm/wasm-pack-template"><img src="https://img.shields.io/travis/rustwasm/wasm-pack-template.svg?style=flat-square" alt="Build Status" /></a>
-  </p>
+## A Instructions
 
-  <h3>
-    <a href="https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html">Tutorial</a>
-    <span> | </span>
-    <a href="https://discordapp.com/channels/442252698964721669/443151097398296587">Chat</a>
-  </h3>
+![A instructions spec](media/A-instruction-spec.PNG)
 
-  <sub>Built with 🦀🕸 by <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a></sub>
-</div>
+## C Instructions
 
-## About
+![C instructions spec](media/C-instruction-spec.PNG)
 
-[**📚 Read this template tutorial! 📚**][template-docs]
+## Symbols
 
-This template is designed for compiling Rust libraries into WebAssembly and
-publishing the resulting package to NPM.
+![symbols](media/Symbols-spec.PNG)
 
-Be sure to check out [other `wasm-pack` tutorials online][tutorials] for other
-templates and usages of `wasm-pack`.
+# Hack Assembler
+The assembler compiles symbolic Hack code to binary code that the Hack machine understands.
+This project is structured in four parts:
+1. [Parser](src/hack_parser.rs)
+2. [Emitter](src/hack_emitter.rs)
+3. [Assembler](src/hack_assembler.rs)
+4. [Command Line Interface for the Assembler](src/main.rs)
 
-[tutorials]: https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html
-[template-docs]: https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html
+# Want to learn more about Hack?
 
-## 🚴 Usage
+Check out the [course video on Hack assembly](https://www.coursera.org/learn/build-a-computer/lecture/AYPo6/unit-6-2-the-hack-assembly-language) and the whole [From Nand to Tetris course](https://www.coursera.org/learn/build-a-computer/home/welcome).
 
-### 🐑 Use `cargo generate` to Clone this Template
+# Credits
+Thanks to Noam Nisan and Shimon Schocken for developing the amazing From Nand to Tetris course and Bodil Stokke for her [excellent tutorial](https://bodil.lol/parser-combinators/) on parser combinators in Rust
 
-[Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
-
-```
-cargo generate --git https://github.com/rustwasm/wasm-pack-template.git --name my-project
-cd my-project
-```
-
-### 🛠️ Build with `wasm-pack build`
-
-```
-wasm-pack build
-```
-
-### 🔬 Test in Headless Browsers with `wasm-pack test`
-
-```
-wasm-pack test --headless --firefox
-```
-
-### 🎁 Publish to NPM with `wasm-pack publish`
-
-```
-wasm-pack publish
-```
-
-## 🔋 Batteries Included
-
-* [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) for communicating
-  between WebAssembly and JavaScript.
-* [`console_error_panic_hook`](https://github.com/rustwasm/console_error_panic_hook)
-  for logging panic messages to the developer console.
-* [`wee_alloc`](https://github.com/rustwasm/wee_alloc), an allocator optimized
-  for small code size.
+# License
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/)
