@@ -79,6 +79,13 @@ pub struct State {
   variable_index: usize,
 }
 
+struct SingleParseError {
+  message: String,
+  from: Location,
+  to: Location,
+  state: State,
+}
+
 pub fn parse<'a>(source: &'a str) -> Result<Vec<Instruction>, String> {
   let initial_table: HashMap<String, usize> = vec![("R0", 0),
     ("R1", 1),
@@ -109,7 +116,7 @@ pub fn parse<'a>(source: &'a str) -> Result<Vec<Instruction>, String> {
     instruction_index: 0,
     variable_index: 16,
   };
-  let output = one_or_more_till_end(|input, location, state: State| match maybe_indented(token("@")).parse(input, location, state.clone()) {
+  let parser = one_or_more_till_end(|input, location, state: State| match maybe_indented(token("@")).parse(input, location, state.clone()) {
     ParseResult::ParseOk { .. } => maybe_indented(a_instruction()).parse(input, location, state),
     ParseResult::ParseError { .. } => maybe_indented(either(other(), c_instruction())).parse(input, location, state),
   }).map_with_state(
@@ -117,35 +124,41 @@ pub fn parse<'a>(source: &'a str) -> Result<Vec<Instruction>, String> {
       instructions.iter().map(|instruction|
         match instruction {
           Instruction::A(a_instruction) =>
-            Instruction::A(
-              match a_instruction {
+            match a_instruction {
               AInstruction::label(label) =>
               {
                 match state.symbol_table.get(&label.value) {
-                  Some(index) => AInstruction::number(*index),
-                  None => {
-                    println!(
-                      "{}",
-                      display_error(
-                        source,
-                        format!("I found an undefined goto label `{}`", label.value),
-                        label.from,
-                        label.to,
-                      )
-                    );
-                    std::process::exit(0);
-                  }
+                  Some(index) => Ok(Instruction::A(AInstruction::number(*index))),
+                  None => Err(
+                    SingleParseError {
+                      message: format!("I found an undefined goto label `{}`", label.value),
+                      from: label.from,
+                      to: label.to,
+                      state: state.clone(),
+                    }
+                  )
                 }
-                },
-              _ => a_instruction.clone(),
-            }),
-          _ => instruction.clone(),
+              },
+              _ => Ok(Instruction::A(a_instruction.clone())),
+            },
+          _ => Ok(instruction.clone()),
         }
-      ).collect()
-  )
-  .parse(source, Location { row: 1, col: 1 }, initial_state);
+      ).collect::<Result<Vec<Instruction>, SingleParseError>>()
+  );
+  let output = parser.parse(source, Location { row: 1, col: 1 }, initial_state);
   match output {
-    ParseResult::ParseOk { output, .. } => Ok(output),
+    ParseResult::ParseOk { output, .. } =>
+      match output {
+        Ok(output) => Ok(output),
+        Err(
+          SingleParseError {
+            message: error_message,
+            from,
+            to,
+            ..
+          }
+        ) => Err(display_error(source, error_message, from, to)),
+      }
     ParseResult::ParseError {
       message: error_message,
       from,
