@@ -1,7 +1,5 @@
 mod utils;
-mod hack_parser;
-mod hack_emitter;
-mod hack_assembler;
+extern crate hack_assembler;
 
 use wasm_bindgen::prelude::*;
 
